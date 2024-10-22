@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { PlotlyModule } from 'angular-plotly.js';
+import { pasteSvg } from '../../assets/svgImages';
 
 @Component({
   selector: 'app-line-graph',
@@ -23,6 +24,11 @@ export class LineGraphComponent {
       type: 'scatter',
       line: { color: '#00bfff', dash: 'solid', shape: 'spline' },
       mode: 'lines',
+      hovertemplate:
+        '%{pasteSvg}' +
+        '<br><b>X:</b> %{x}<br>' + // X value
+        '<b>Y:</b> %{y}<br>' + // Y value
+        '<extra></extra>',
     },
     {
       x: [
@@ -92,7 +98,62 @@ export class LineGraphComponent {
     // Add more lines as needed
   ];
 
+  pixelToDataRatio = 4000 / 800; // data units per pixel
+  desiredPixels = 15;
+  radius = (this.desiredPixels * this.pixelToDataRatio) / 2;
+
   lineLayout = {
+    shapes: [
+      {
+        type: 'line',
+        x0: 2110,
+        y0: 0,
+        x1: 2110,
+        y1: 3,
+        line: {
+          color: 'black',
+          width: 2,
+        },
+      },
+
+      // Bottom circle
+      {
+        type: 'circle',
+        xref: 'x',
+        yref: 'y',
+        x0: 2105,
+        y0: -0.05,
+        x1: 2115,
+        y1: 0.05,
+        // fillcolor: 'black',
+        line: {
+          color: 'black',
+        },
+      },
+      // Top circle
+      {
+        type: 'circle',
+        xref: 'x',
+        yref: 'y',
+        x0: 2105,
+        y0: 2.95,
+        x1: 2115,
+        y1: 3.05,
+        // fillcolor: 'black',
+        line: {
+          color: 'black',
+        },
+      },
+    ],
+    hoverlabel: {
+      bgcolor: 'white',
+      bordercolor: 'black',
+      font: {
+        family: 'Arial',
+        size: 14,
+        color: 'black',
+      },
+    },
     margin: {
       pad: 13,
     },
@@ -132,6 +193,25 @@ export class LineGraphComponent {
   };
 
   config = {
+    // modeBarButtonsToAdd: [
+    //   {
+    //     name: 'Reset Axes',
+    //     icon: {
+    //       width: 500,
+    //       height: 500,
+    //       // Custom SVG path for a refresh icon
+    //       path: 'M256.455 8c66.269.119 126.437 26.233 170.859 68.685l35.715-35.715C478.149 25.851 504 36.559 504 57.941V192c0 13.255-10.745 24-24 24H345.941c-21.382 0-32.09-25.851-16.971-40.971l41.75-41.75c-30.864-28.899-70.801-44.907-113.23-45.273-92.398-.798-170.283 73.977-169.484 169.442C88.764 348.009 162.184 424 256 424c41.127 0 79.997-14.678 110.629-41.556 4.743-4.161 11.906-3.908 16.368.553l39.662 39.662c4.872 4.872 4.631 12.815-.482 17.433C378.202 479.813 319.926 504 256 504 119.034 504 8.001 392.967 8 256.002 7.999 119.193 119.646 7.755 256.455 8z',
+    //       // SVG transform to fit the icon properly
+    //       transform: 'scale(0.05)',
+    //     },
+    //     // click: function(gd) {
+    //     //     Plotly.relayout(gd, {
+    //     //         'xaxis.autorange': true,
+    //     //         'yaxis.autorange': true
+    //     //     });
+    //     // }
+    //   },
+    // ],
     modeBarButtonsToRemove: [
       'toImage', // Remove download plot button
       'zoom2d', // Remove zoom button
