@@ -1,5 +1,9 @@
-<div class="graph-wrapper">
+<button (click)="changeWidth()">Change Width</button>
+<div #plotContainer [ngClass]="{ active: isActive, inactive: !isActive }">
   <plotly-plot
+    #plotly
+    id="myPlot"
+    name="plotly-bar-graph"
     [data]="barData"
     [layout]="barLayout"
     [config]="config"

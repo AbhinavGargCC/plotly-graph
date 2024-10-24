@@ -1,14 +1,58 @@
-import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, ViewChild, viewChild } from '@angular/core';
+import { NgModel } from '@angular/forms';
 import { PlotlyModule } from 'angular-plotly.js';
+import Plotly from 'plotly.js';
 
 @Component({
   selector: 'app-bar-graph-group-entities',
   standalone: true,
-  imports: [PlotlyModule],
+  imports: [PlotlyModule, CommonModule],
   templateUrl: './bar-graph-group-entities.component.html',
   styleUrl: './bar-graph-group-entities.component.css',
 })
 export class BarGraphGroupEntitiesComponent {
+  @ViewChild('plotly') plotly!: any;
+  @ViewChild('plotContainer') plotContainer!: ElementRef;
+  private resizeObserver: ResizeObserver;
+
+  constructor() {
+    // Initialize ResizeObserver
+    this.resizeObserver = new ResizeObserver((entries) => {
+      console.log('entries : ', entries);
+      this.onResize();
+    });
+  }
+
+  ngAfterViewInit() {
+    // Start observing the chart container
+    if (this.plotly) {
+      // const element = this.plotly.plotEl.nativeElement;
+      const element = this.plotContainer.nativeElement;
+      this.resizeObserver.observe(element);
+    }
+  }
+
+  ngOnDestroy() {
+    // Clean up the observer
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
+  }
+
+  onResize() {
+    if (this.plotly) {
+      // Force a redraw of the plot
+      this.plotly.updatePlot();
+    }
+  }
+
+  isActive: boolean = false;
+  // Method to change the width
+  changeWidth() {
+    this.isActive = !this.isActive;
+  }
+
   countryData = [
     {
       name: 'Canada',
@@ -155,6 +199,7 @@ export class BarGraphGroupEntitiesComponent {
   barData = [this.traceForCities, this.traceForStates, this.traceForLanguages];
 
   barLayout = {
+    autosize: true,
     scattermode: 'group',
     title: {
       text: 'Grouped by Country',
@@ -206,13 +251,6 @@ export class BarGraphGroupEntitiesComponent {
       'autoScale2d', // Remove autoscale button
     ],
     displaylogo: false, // Optionally hide the Plotly logo
+    responsive: true,
   };
-
-  ngOnInit() {
-    // Configuration for responsiveness
-    const config = {
-      responsive: true,
-      displayModeBar: false,
-    };
-  }
 }
